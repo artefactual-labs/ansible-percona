@@ -1,0 +1,4 @@
+---
+
+- name: "Restart percona"
+  service: "name=mysql state=restarted"

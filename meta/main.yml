@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: "Tim Kuhlman"
+  company: "HP"
+  license: ISC
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+        - saucy
+        - precise
+    - name: Debian
+      versions:
+        - wheezy
+        - squeeze
+  categories:
+    - database
+dependecies: []

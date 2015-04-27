@@ -1,0 +1,28 @@
+---
+
+- name: "Obtaining percona public key"
+  apt_key: "url=http://www.percona.com/downloads/RPM-GPG-KEY-percona state=present"
+
+- name: "Adding percona repository"
+  apt_repository: "repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' state=present"
+
+- name: "Update apt cache"
+  apt: "update_cache=yes cache_valid_time=300"
+
+- name: "Install percona database server"
+  action: "apt pkg={{ item }} state=latest"
+  with_items:
+    - "percona-server-server-5.5"
+    - "percona-server-client-5.5"
+    - "percona-toolkit"
+    - "percona-xtrabackup"
+    - "python-mysqldb"
+
+- name: "Adjust permissions of datadir"
+  file: "path={{ mysql_datadir }} owner=mysql group=mysql mode=0700 state=directory"
+
+- name: "Ensure that percona is running"
+  service: "name=mysql state=started"
+
+- name: "Ensure that percona is enabled"
+  service: "name=mysql enabled=yes"
