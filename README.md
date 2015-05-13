@@ -1,6 +1,7 @@
 # Ansible Role: Percona
 
 Ansible playbook to install Percona Server on Debian/Ubuntu servers.
+Adapted from https://github.com/hpcloud-mon/ansible-percona
 
 ## Requirements
 

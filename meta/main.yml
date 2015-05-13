@@ -1,8 +1,8 @@
 ---
 galaxy_info:
-  author: "Tim Kuhlman"
-  company: "HP"
-  license: ISC
+  author: "Artefactual Systems"
+  company: "Artefactual Systems"
+  license: AGPLv3
   min_ansible_version: 1.4
   platforms:
     - name: Ubuntu
