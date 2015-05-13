@@ -8,6 +8,7 @@
     - "::1"
     - "localhost"
   when: "ansible_hostname != 'localhost'"
+  sudo: yes
 
 - name: "Set the root password"
   mysql_user: "name=root host={{ item }} password={{ mysql_root_password }} check_implicit_admin=yes"
@@ -16,15 +17,19 @@
     - "::1"
     - "localhost"
   when: "ansible_hostname == 'localhost'"
+  sudo: yes
 
 - name: "Copy .my.cnf file into the root home folder"
   template: "src=root-my-cnf.j2 dest=/root/.my.cnf owner=root group=root mode=0600"
+  sudo: yes
 
 - name: "Ensure anonymous users are not in the database"
   mysql_user: "name='' host={{ item }} state=absent"
   with_items:
     - "{{ ansible_hostname }}"
     - "localhost"
+  sudo: yes
 
 - name: "Remove the test database"
   mysql_db: "name=test state=absent"
+  sudo: yes
