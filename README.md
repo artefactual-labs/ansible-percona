@@ -9,23 +9,11 @@ None.
 
 ## Role Variables
 
-Available variables are listed below with its default values.
+Check the file defaults/main.yml for the role defaults.
 
-	mysql_root_password: reallylongpassword
+As a minimum, override the variable `mysql_root_password` in your playbook as
+it is set to a weak value by default.
 
-Define the MySQL root password, this password will be used to create a **/root/.my.cnf** to allow root mysql connections without password
-
-	mysql_port: 3306
-	mysql_bind_address: 0.0.0.0
-
-Define port and bind address for MySQL connections
-
-	mysql_max_allowed_packet: 16M
-	mysql_key_buffer: 16M
-	mysql_thread_stack: 192K
-	mysql_cache_size: 8
-
-Various other settings are available in defaults/main.yml
 
 ## License
 
