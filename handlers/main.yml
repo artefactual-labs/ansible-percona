@@ -2,4 +2,4 @@
 
 - name: "Restart percona"
   service: "name=mysql state=restarted"
-  sudo: yes
+  become: yes
