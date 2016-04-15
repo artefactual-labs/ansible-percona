@@ -7,6 +7,6 @@
     priv: "{{ item.priv | default('*.*:ALL') }}"
     state: present
     host: "{{ item.host | default('localhost') }}"
-  with_items: mysql_users
+  with_items: "{{ mysql_users }}"
   when: (mysql_users is defined) and (mysql_users|length > 0)
   become: yes
