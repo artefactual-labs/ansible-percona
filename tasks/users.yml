@@ -1,12 +1,11 @@
 ---
 
-- name: Make sure the MySQL users are present
+- name: "Make sure the MySQL users are present"
   mysql_user:
     name: "{{ item.name }}"
     password: "{{ item.pass | default('pass') }}"
     priv: "{{ item.priv | default('*.*:ALL') }}"
-    state: present
+    state: "present"
     host: "{{ item.host | default('localhost') }}"
   with_items: "{{ mysql_users }}"
-  when: (mysql_users is defined) and (mysql_users|length > 0)
-  become: yes
+  become: "yes"

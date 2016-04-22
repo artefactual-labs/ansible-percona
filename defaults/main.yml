@@ -33,3 +33,6 @@ mysql_innodb_log_buffer_size: "1M"
 mysql_innodb_log_file_size: "5M"
 
 mysql_character_set_client_handshake: "FALSE"
+
+mysql_databases: []
+mysql_users: []
