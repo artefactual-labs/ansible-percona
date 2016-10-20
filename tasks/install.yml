@@ -1,7 +1,9 @@
 ---
-
+# (do not put quotes on key id, for some reason it won't work)
 - name: "Obtaining percona public key"
-  apt_key: "url=http://www.percona.com/downloads/RPM-GPG-KEY-percona state=present"
+  apt_key: 
+    keyserver: "keyserver.ubuntu.com"
+    id: 8507EFA5
   become: yes
 
 - name: "Adding percona repository"
