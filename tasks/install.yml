@@ -23,8 +23,8 @@
 - name: "Install percona database server"
   action: "apt pkg={{ item }} state=latest"
   with_items:
-    - "percona-server-server-5.5"
-    - "percona-server-client-5.5"
+    - "percona-server-server-5.6"
+    - "percona-server-client-5.6"
     - "percona-toolkit"
     - "percona-xtrabackup"
     - "python-mysqldb"
