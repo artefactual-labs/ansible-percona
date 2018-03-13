@@ -9,12 +9,6 @@
 - name: "Adding percona repository"
   apt_repository: "repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' state=present"
   become: yes
-  when: "ansible_distribution_release != 'xenial'"
-
-- name: "Adding percona repository (use wily packages as xenial package N/A yet)"
-  apt_repository: "repo='deb http://repo.percona.com/apt wily main' state=present"
-  become: yes
-  when: "ansible_distribution_release == 'xenial'"
 
 - name: "Update apt cache"
   apt: "update_cache=yes cache_valid_time=300"
