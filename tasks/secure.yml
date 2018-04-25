@@ -1,7 +1,7 @@
 ---
 
 - name: "Set the root password"
-  mysql_user: "name=root host={{ item }} password={{ mysql_root_password }} check_implicit_admin=yes"
+  mysql_user: "name=root host={{ item }} password=\"{{ mysql_root_password }}\" check_implicit_admin=yes"
   with_items:
     - "{{ ansible_hostname }}"
     - "127.0.0.1"
@@ -11,7 +11,7 @@
   become: yes
 
 - name: "Set the root password"
-  mysql_user: "name=root host={{ item }} password={{ mysql_root_password }} check_implicit_admin=yes"
+  mysql_user: "name=root host={{ item }} password=\"{{ mysql_root_password }}\" check_implicit_admin=yes"
   with_items:
     - "127.0.0.1"
     - "::1"
