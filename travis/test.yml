@@ -2,7 +2,6 @@
 - hosts: all
 
   pre_tasks:
-
     - name: Ensure build dependencies are installed (Debian)
       package:
         name: "{{ item }}"
@@ -13,6 +12,9 @@
         - tar
         - sudo
       when: ansible_os_family == 'Debian'
+
+    - name: Include vars
+      include_vars: "test_role_vars.yml"
 
   roles:
     - role_under_test
