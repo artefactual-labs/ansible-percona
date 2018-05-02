@@ -1,7 +1,12 @@
 ---
 
 - name: "Set the root password"
-  mysql_user: "name=root host={{ item }} password=\"{{ mysql_root_password }}\" check_implicit_admin=yes"
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    state: present
   with_items:
     - "{{ ansible_hostname }}"
     - "127.0.0.1"
@@ -11,7 +16,12 @@
   become: yes
 
 - name: "Set the root password"
-  mysql_user: "name=root host={{ item }} password=\"{{ mysql_root_password }}\" check_implicit_admin=yes"
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    check_implicit_admin: yes
+    state: present
   with_items:
     - "127.0.0.1"
     - "::1"
@@ -20,16 +30,26 @@
   become: yes
 
 - name: "Copy .my.cnf file into the root home folder"
-  template: "src=root-my-cnf.j2 dest=/root/.my.cnf owner=root group=root mode=0600"
+  template:
+    src: root-my-cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
   become: yes
 
 - name: "Ensure anonymous users are not in the database"
-  mysql_user: "name='' host={{ item }} state=absent"
+  mysql_user:
+    name: ''
+    host: "{{ item }}"
+    state: absent
   with_items:
     - "{{ ansible_hostname }}"
     - "localhost"
   become: yes
 
 - name: "Remove the test database"
-  mysql_db: "name=test state=absent"
+  mysql_db:
+    name: test
+    state: absent
   become: yes
