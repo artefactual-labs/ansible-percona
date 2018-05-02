@@ -1,5 +1,5 @@
 ---
-mysql_root_password: "rootpass123"
+mysql_root_password: "rootpass123#!$"
 
 mysql_databases:
   - name: "atom"
