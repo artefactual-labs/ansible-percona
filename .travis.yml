@@ -4,6 +4,9 @@
 #   https://github.com/drhelius/travis-ansible-demo
 #   https://www.jeffgeerling.com/blog/2018/how-i-test-ansible-configuration-on-7-different-oses-docker 
 
+notifications:
+  email: false
+
 sudo: required
 
 env:
