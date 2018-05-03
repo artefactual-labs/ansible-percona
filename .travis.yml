@@ -30,8 +30,15 @@ before_install:
 script:
   - container_id=$(mktemp)
   - 'sudo docker run --detach --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${distribution}-${version}:ansible > "${container_id}"'
+
+  # this doesn't work (getting "test: too many arguments" error in travis)
+  # # install dependencies required when using ansible with python3
+  # - test "${ansible_python}" = "python3" \
+  #   && sudo docker exec "$(cat ${container_id})" apt-get install python3-apt
+
   - 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v --extra-vars "ansible_python_interpreter=/usr/bin/${ansible_python}" /etc/ansible/roles/role_under_test/travis/test.yml --syntax-check'
   - 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v --extra-vars "ansible_python_interpreter=/usr/bin/${ansible_python}" /etc/ansible/roles/role_under_test/travis/test.yml'
+
   ## skipping idempotence tests for now
   # - >
   #   sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v /etc/ansible/roles/clamav_role/travis/test.yml
