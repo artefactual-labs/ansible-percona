@@ -1,0 +1,14 @@
+---
+
+- name: "Create language dir symlink"
+  file:
+    src: /usr/share/percona-server
+    dest: /usr/share/mysql
+    state: link
+  become: yes
+
+- name: "Update the my.cnf"
+  template: "src=etc_my.cnf-centos.j2 dest=/etc/my.cnf owner=root mode=0600"
+  notify:
+    - "Restart percona"
+  become: yes
