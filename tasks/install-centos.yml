@@ -10,9 +10,9 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - "Percona-Server-server-55"
-    - "Percona-Server-client-55"
-    - "Percona-Server-devel-55"
+    - "Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}"
+    - "Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}"
+    - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
     - "percona-toolkit"
     - "percona-xtrabackup"
   become: yes
@@ -24,13 +24,17 @@
   become: yes
 
 - name: "Adjust permissions of datadir"
-  file: "path={{ mysql_datadir }} owner=mysql group=mysql mode=0755 state=directory"
+  file:
+    path: "{{ mysql_datadir }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: 0755
+    state: "directory"
   become: yes
 
-- name: "Ensure that percona is running"
-  service: "name=mysql state=started"
-  become: yes
-
-- name: "Ensure that percona is enabled"
-  service: "name=mysql enabled=yes"
+- name: "Ensure that percona is running and enabled"
+  service:
+    name: "mysql"
+    state: "started"
+    enabled: "yes"
   become: yes
