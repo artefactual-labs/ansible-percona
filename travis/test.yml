@@ -2,6 +2,12 @@
 - hosts: all
 
   pre_tasks:
+    - name: Install required dependencies when running ansible with python3
+      raw: apt -y update && apt install -y python3-apt
+      when:
+        - ansible_os_family == 'Debian'
+        - ansible_python_interpreter == '/usr/bin/python3'
+
     - name: Ensure build dependencies are installed (Debian)
       package:
         name: "{{ item }}"

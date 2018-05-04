@@ -1,5 +1,9 @@
 ---
 
+# Version to install, defaulting to 5.6
+mysql_version_major: "5"
+mysql_version_minor: "6"
+
 # Basic settings
 mysql_root_password: "pass"
 mysql_port: "3306"

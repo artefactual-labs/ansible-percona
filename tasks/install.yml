@@ -7,31 +7,60 @@
   become: yes
 
 - name: "Adding percona repository"
-  apt_repository: "repo='deb http://repo.percona.com/apt {{ ansible_distribution_release }} main' state=present"
+  apt_repository:
+    repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
+    state: "present"
   become: yes
 
 - name: "Update apt cache"
-  apt: "update_cache=yes cache_valid_time=300"
+  apt:
+    update_cache: yes
+    cache_valid_time: 300
   become: yes
 
-- name: "Install percona database server"
-  action: "apt pkg={{ item }} state=latest"
+- name: "Get the major version of python used to run ansible"
+  command: "{{ ansible_python_interpreter }} -c 'import sys; print(sys.version_info.major)'"
+  register: ansible_python_major
+  changed_when: false
+
+- debug:
+    msg: "ansible_python_interpreter major version: {{ ansible_python_major.stdout }}"
+
+- name: "Install package dependencies for ansible MySQL modules (python 2)"
+  apt:
+    name: "python-mysqldb"
+  when:
+    - ansible_python_major.stdout == "2"
+
+- name: "Install package dependencies for ansible MySQL modules (python 3)"
+  apt:
+    name: "python3-mysqldb"
+  when:
+    - ansible_python_major.stdout == "3"
+
+- name: "Install percona packages and dependencies on Ubuntu"
+  apt:
+    name: "{{ item }}"
+    state: "present"
   with_items:
-    - "percona-server-server-5.5"
-    - "percona-server-client-5.5"
-    - "percona-toolkit"
-    - "percona-xtrabackup"
-    - "python-mysqldb"
+     - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
+     - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
+     - "percona-toolkit"
+     - "percona-xtrabackup"
   become: yes
 
 - name: "Adjust permissions of datadir"
-  file: "path={{ mysql_datadir }} owner=mysql group=mysql mode=0700 state=directory"
+  file:
+    path: "{{ mysql_datadir }}"
+    owner: "mysql"
+    group: "mysql"
+    mode: 0700
+    state: "directory"
   become: yes
 
-- name: "Ensure that percona is running"
-  service: "name=mysql state=started"
-  become: yes
-
-- name: "Ensure that percona is enabled"
-  service: "name=mysql enabled=yes"
+- name: "Ensure that percona is running and enabled"
+  service:
+    name: "mysql"
+    state: "started"
+    enabled: "yes"
   become: yes
