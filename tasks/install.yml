@@ -19,7 +19,7 @@
   become: yes
 
 - name: "Get the major version of python used to run ansible"
-  command: "{{ ansible_python_interpreter }} -c 'import sys; print(sys.version_info.major)'"
+  command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
   register: ansible_python_major
   changed_when: false
 
