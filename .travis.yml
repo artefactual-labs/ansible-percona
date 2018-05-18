@@ -22,6 +22,13 @@ env:
   - distribution: centos
     version: 7
     ansible_extra_vars: ""
+  - distribution: ubuntu
+    version: xenial
+    ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
+  - distribution: centos
+    version: 7
+    ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
+
 
 services:
   - docker
@@ -49,5 +56,13 @@ script:
     | grep -q 'information_schema'
     && (echo 'OK: Able to login to MySQL server as root' && exit 0)
     || (echo 'Error: Unable to login to MySQL server as root' && exit 1)
+
+  # Check to make sure we can connect to MySQL as root via TCP.
+  - >
+    sudo docker exec "$(cat ${container_id})" mysql -h 127.0.0.1 -u root -e 'show databases;'
+    | grep -q 'information_schema'
+    && (echo 'OK: Able to login to MySQL server as root' && exit 0)
+    || (echo 'Error: Unable to login to MySQL server as root' && exit 1)
+
 
   - 'sudo docker rm -f "$(cat ${container_id})"'

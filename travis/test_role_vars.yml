@@ -1,5 +1,5 @@
 ---
-mysql_root_password: "rootpass123#!$"
+mysql_root_password: "rootPASS123#!$"
 
 mysql_databases:
   - name: "atom"
@@ -8,6 +8,6 @@ mysql_databases:
 
 mysql_users:
   - name: "atomuser"
-    pass: "atompass"
+    pass: "atomPASS9876."
     priv: "atom.*:ALL,GRANT"
     host: "%"
