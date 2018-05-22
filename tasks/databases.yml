@@ -6,4 +6,3 @@
     encoding: "{{ item.encoding | default('utf8') }}"
     state: "present"
   with_items: "{{ mysql_databases }}"
-  become: "yes"

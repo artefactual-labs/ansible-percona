@@ -8,4 +8,3 @@
     state: "present"
     host: "{{ item.host | default('localhost') }}"
   with_items: "{{ mysql_users }}"
-  become: "yes"

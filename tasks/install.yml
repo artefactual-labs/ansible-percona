@@ -4,19 +4,16 @@
   apt_key: 
     keyserver: "keyserver.ubuntu.com"
     id: 8507EFA5
-  become: yes
 
 - name: "Adding percona repository"
   apt_repository:
     repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
     state: "present"
-  become: yes
 
 - name: "Update apt cache"
   apt:
     update_cache: yes
     cache_valid_time: 300
-  become: yes
 
 - name: "Get the major version of python used to run ansible"
   command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
@@ -47,7 +44,6 @@
      - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
      - "percona-toolkit"
      - "percona-xtrabackup"
-  become: yes
 
 - name: "Adjust permissions of datadir"
   file:
@@ -56,11 +52,9 @@
     group: "mysql"
     mode: 0700
     state: "directory"
-  become: yes
 
 - name: "Ensure that percona is running and enabled"
   service:
     name: "mysql"
     state: "started"
     enabled: "yes"
-  become: yes

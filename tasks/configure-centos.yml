@@ -5,7 +5,6 @@
     src: "/usr/share/percona-server"
     dest: "/usr/share/mysql"
     state: "link"
-  become: yes
 
 - name: "Update the my.cnf"
   template:
@@ -15,4 +14,3 @@
     mode: 0600
   notify:
     - "Restart percona"
-  become: yes

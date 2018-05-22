@@ -4,7 +4,6 @@
   stat:
     path: "/root/.my.cnf"
   register: root_my_cnf_stat
-  become: yes
   when:
     - mysql_version_major == "5"
     - mysql_version_minor == "7"
@@ -29,7 +28,6 @@
         owner: root
         group: root
         mode: 0600
-  become: yes
   when:
     - mysql_version_major == "5"
     - mysql_version_minor == "7"
@@ -49,7 +47,6 @@
     - "::1"
     - "localhost"
   when: "ansible_hostname != 'localhost'"
-  become: yes
 
 - name: "Set the root password"
   mysql_user:
@@ -63,7 +60,6 @@
     - "::1"
     - "localhost"
   when: "ansible_hostname == 'localhost'"
-  become: yes
 
 - name: "Copy .my.cnf file into the root home folder"
   template:
@@ -72,7 +68,6 @@
     owner: root
     group: root
     mode: 0600
-  become: yes
 
 - name: "Ensure anonymous users are not in the database"
   mysql_user:
@@ -82,10 +77,8 @@
   with_items:
     - "{{ ansible_hostname }}"
     - "localhost"
-  become: yes
 
 - name: "Remove the test database"
   mysql_db:
     name: test
     state: absent
-  become: yes

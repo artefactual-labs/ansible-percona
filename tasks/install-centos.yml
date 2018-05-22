@@ -3,7 +3,6 @@
   yum:
     name: http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
     state: present
-  become: yes
 
 - name: "Install percona database server"
   yum:
@@ -15,13 +14,11 @@
     - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
     - "percona-toolkit"
     - "percona-xtrabackup"
-  become: yes
 
 - name: "Install MySQL-python package"
   yum:
     name: "MySQL-python"
     state: present
-  become: yes
 
 - name: "Adjust permissions of datadir"
   file:
@@ -30,11 +27,9 @@
     group: "mysql"
     mode: 0755
     state: "directory"
-  become: yes
 
 - name: "Ensure that percona is running and enabled"
   service:
     name: "mysql"
     state: "started"
     enabled: "yes"
-  become: yes
