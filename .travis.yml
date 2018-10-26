@@ -11,6 +11,9 @@ sudo: required
 
 env:
   - distribution: ubuntu
+    version: bionic
+    ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
+  - distribution: ubuntu
     version: xenial
     ansible_extra_vars: "ansible_python_interpreter=/usr/bin/python3"
   - distribution: ubuntu
