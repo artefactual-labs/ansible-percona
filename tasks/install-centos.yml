@@ -1,7 +1,7 @@
 ---
 - name: "Add Percona yum repository"
   yum:
-    name: http://www.percona.com/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
     state: present
 
 - name: "Install percona database server"
