@@ -30,6 +30,9 @@ lc_messages_dir = {{ mysql_language }}
 {% endif %}
 bind-address = {{ mysql_bind_address }}
 skip-external-locking
+{% if mysql_sql_mode is defined %}
+sql_mode={{ mysql_sql_mode }}
+{% endif %}
 
 # * Fine Tuning
 key_buffer_size         = {{ mysql_key_buffer }}
