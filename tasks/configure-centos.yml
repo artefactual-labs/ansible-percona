@@ -11,6 +11,6 @@
     src: "etc_my.cnf-centos.j2"
     dest: "/etc/my.cnf"
     owner: "root"
-    mode: 0600
+    mode: 0644
   notify:
     - "Restart percona"
