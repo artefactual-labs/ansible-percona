@@ -85,6 +85,11 @@ innodb_log_buffer_size = {{ mysql_innodb_log_buffer_size }}
 innodb_log_file_size = {{ mysql_innodb_log_file_size }}
 innodb_file_per_table = {{ mysql_innodb_file_per_table }}
 
+{% if mysql_optimizer_switch is defined %}
+# Check https://bugs.mysql.com/bug.php?id=69721 for more info
+optimizer_switch = {{ mysql_optimizer_switch }}
+{% endif %}
+
 # ** Security Features
 # Read the manual, too, if you want chroot!
 # chroot = /var/lib/mysql/
