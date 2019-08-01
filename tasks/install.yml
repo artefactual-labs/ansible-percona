@@ -3,7 +3,7 @@
 - name: "Obtaining percona public key"
   apt_key: 
     keyserver: "keyserver.ubuntu.com"
-    id: 8507EFA5
+    id: 9334A25F8507EFA5
 
 - name: "Adding percona repository"
   apt_repository:
