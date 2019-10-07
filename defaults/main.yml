@@ -40,3 +40,5 @@ mysql_character_set_client_handshake: "FALSE"
 
 mysql_databases: []
 mysql_users: []
+
+install_rpm_repositories: "true"

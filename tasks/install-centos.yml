@@ -3,6 +3,7 @@
   yum:
     name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
     state: present
+  when: install_rpm_repositories|bool
 
 - name: "Install percona database server"
   yum:
