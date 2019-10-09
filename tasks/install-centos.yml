@@ -7,14 +7,12 @@
 
 - name: "Install percona database server"
   yum:
-    name: "{{ item }}"
+    name: [ 'Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}',
+            'Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}',
+            'Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}',
+            'percona-toolkit',
+            'percona-xtrabackup' ]
     state: present
-  with_items:
-    - "Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}"
-    - "Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}"
-    - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
-    - "percona-toolkit"
-    - "percona-xtrabackup"
 
 - name: "Install MySQL-python package"
   yum:
