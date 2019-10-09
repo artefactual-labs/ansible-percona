@@ -37,10 +37,11 @@
 
 - name: "Install percona packages and dependencies on Ubuntu"
   apt:
-    name: [ 'percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}',
-            'percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}',
-            'percona-toolkit',
-            'percona-xtrabackup' ]
+    name:
+      - 'percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}'
+      - 'percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}'
+      - 'percona-toolkit'
+      - 'percona-xtrabackup'
     state: "present"
  
 - name: "Adjust permissions of datadir"
