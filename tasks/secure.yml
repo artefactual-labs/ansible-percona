@@ -1,38 +1,37 @@
 ---
 
-- name: "Check if /root/.my.cnf file exists if installing 5.7 on Red Hat (to determine if new install)"
+- name: "Check if /root/.my.cnf file exists if installing >= 5.7 on Red Hat (to determine if new install)"
   stat:
     path: "/root/.my.cnf"
   register: root_my_cnf_stat
   when:
-    - mysql_version_major == "5"
-    - mysql_version_minor == "7"
+    - mysql_version is version('5.7', '>=')
     - ansible_os_family == "RedHat"
 
-- name: "Percona 5.7 new install measures (Red Hat)"
+- name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
-    - name: "Parse temporary password from mysql log"
-      shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p'"
+    - name: "Parse temporary password from mysql log, getting last one"
+      shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
       register: temppass
 
     # Set root password 
     # (mysql_user module can't be used here, got error 1862 'Your password has expired. To log in you must change it using a client that supports expired passwords.')
     # escape single quotes in shell with '' not \'
     - name: "Set root password (using temp password to log in)"
-      shell: 'mysql -e "SET PASSWORD = PASSWORD(''{{ mysql_root_password }}'');" --connect-expired-password -uroot -p"{{ temppass.stdout }}"'
+      shell: 'mysql -e "SET PASSWORD = ''{{ mysql_root_password }}'';" --connect-expired-password -uroot -p"{{ temppass.stdout }}"'
 
-    - name: "add /root/.my.cnf with root password"
-      template:
-        src: root-my-cnf.j2
-        dest: /root/.my.cnf
-        owner: root
-        group: root
-        mode: 0600
   when:
-    - mysql_version_major == "5"
-    - mysql_version_minor == "7"
+    - mysql_version is version('5.7', '>=')
     - ansible_os_family == "RedHat"
     - root_my_cnf_stat.stat.exists == False
+
+- name: "Copy .my.cnf file into the root home folder"
+  template:
+    src: root-my-cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
 
 - name: "Set the root password"
   mysql_user:
@@ -46,28 +45,6 @@
     - "127.0.0.1"
     - "::1"
     - "localhost"
-  when: "ansible_hostname != 'localhost'"
-
-- name: "Set the root password"
-  mysql_user:
-    name: root
-    host: "{{ item }}"
-    password: "{{ mysql_root_password }}"
-    check_implicit_admin: yes
-    state: present
-  with_items:
-    - "127.0.0.1"
-    - "::1"
-    - "localhost"
-  when: "ansible_hostname == 'localhost'"
-
-- name: "Copy .my.cnf file into the root home folder"
-  template:
-    src: root-my-cnf.j2
-    dest: /root/.my.cnf
-    owner: root
-    group: root
-    mode: 0600
 
 - name: "Ensure anonymous users are not in the database"
   mysql_user:

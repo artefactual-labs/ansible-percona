@@ -3,6 +3,7 @@
 # Version to install, defaulting to 5.6
 mysql_version_major: "5"
 mysql_version_minor: "6"
+mysql_version: "{{ mysql_version_major|int }}.{{ mysql_version_minor|int }}"
 
 # Basic settings
 mysql_root_password: "pass"
@@ -42,3 +43,7 @@ mysql_databases: []
 mysql_users: []
 
 install_rpm_repositories: "true"
+
+# Default Auth Plugin
+# used in templates when Percona Server >= 5.7
+mysql_default_authentication_plugin: "mysql_native_password"

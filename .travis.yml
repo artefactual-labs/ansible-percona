@@ -10,28 +10,50 @@ notifications:
 sudo: required
 
 env:
-  - distribution: ubuntu
-    version: bionic
-    ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
-  - distribution: ubuntu
-    version: xenial
-    ansible_extra_vars: "ansible_python_interpreter=/usr/bin/python3"
-  - distribution: ubuntu
-    version: xenial
-    ansible_extra_vars: ""
+  # Trusty + Percona Server 5.6
   - distribution: ubuntu
     version: trusty
     ansible_extra_vars: ""
-  - distribution: centos
-    version: 7
+  # Bionic + Percona Server 5.6
+  - distribution: ubuntu
+    version: bionic
     ansible_extra_vars: ""
+  # Bionic + Percona Server 5.7
+  - distribution: ubuntu
+    version: bionic
+    ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
+  # Bionic + Percona Server 8.0
+  - distribution: ubuntu
+    version: bionic
+    ansible_extra_vars: "'mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password'"
+  # Xenial + Percona Server 5.6 with python3
+  - distribution: ubuntu
+    version: xenial
+    ansible_extra_vars: "ansible_python_interpreter=/usr/bin/python3"
+  # Xenial + Percona Server 5.6
+  - distribution: ubuntu
+    version: xenial
+    ansible_extra_vars: ""
+  # Xenial + Percona Server 5.7
   - distribution: ubuntu
     version: xenial
     ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
+  # Xenial + Percona Server 8.0
+  - distribution: ubuntu
+    version: xenial
+    ansible_extra_vars: "'mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password'"
+  # CentOS + Percona Server 5.6
+  - distribution: centos
+    version: 7
+    ansible_extra_vars: ""
+  # CentOS + Percona Server 5.7
   - distribution: centos
     version: 7
     ansible_extra_vars: "'mysql_version_major=5 mysql_version_minor=7'"
-
+  # CentOS + Percona Server 8.0
+  - distribution: centos
+    version: 7
+    ansible_extra_vars: "'mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password'
 
 services:
   - docker
