@@ -31,6 +31,9 @@ tmpdir      = /tmp
 {% if mysql_sql_mode is defined %}
 sql_mode={{ mysql_sql_mode }}
 {% endif %}
+{% if mysql_default_authentication_plugin is defined and mysql_version is version('5.7', '>=') %}
+default_authentication_plugin={{ mysql_default_authentication_plugin }}
+{% endif %}
 
 # language is for pre-5.5. In 5.5 it is an alias for lc_messages_dir.
 language = {{ mysql_language }}
@@ -42,23 +45,29 @@ key_buffer_size         = {{ mysql_key_buffer }}
 max_allowed_packet      = {{ mysql_max_allowed_packet }}
 thread_stack            = {{ mysql_thread_stack }}
 thread_cache_size       = {{ mysql_cache_size }}
-{% if mysql_version_minor < 7 %}
+{% if  mysql_version is version('5.7', '<') %}
 myisam-recover          = {{ mysql_myisam_recover }}
 {% else %}
 myisam-recover-options  = {{ mysql_myisam_recover }}
 {% endif %}
 max_connections         = {{ mysql_max_connections }}
 table_open_cache        = {{ mysql_table_cache }}
-{% if mysql_version_minor < 7 %}
+{% if  mysql_version is version('5.7', '<') %}
 thread_concurrency      = {{ mysql_thread_concurrency }}
 {% endif %}
 
-# ** Query Cache Configuration
+# ** Query Cache Configuration, removed in MySQL >= 8.0
+{% if mysql_version_major|int < 8 %}
 query_cache_limit       = {{ mysql_query_cache_limit }}
 query_cache_size        = {{ mysql_query_cache_size }}
+{% endif %}
 # ** Logging and Replication
 log_error = /var/log/mysqld.log
+{% if mysql_version_major|int < 8 %}
 log_warnings = 2
+{% else %}
+log_error_verbosity = 2
+{% endif %}
 #general_log_file        = /var/log/mysql/mysqld.log
 #general_log             = 1
 #

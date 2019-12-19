@@ -5,14 +5,32 @@
     state: present
   when: install_rpm_repositories|bool
 
-- name: "Install percona database server"
+# https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
+- name: "Enable Percona repository (Percona version >= 8)"
+  command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
+  when: mysql_version_major|int >= 8 and install_rpm_repositories|bool
+ 
+- name: "Install percona database server (Percona version < 8)"
   yum:
-    name: [ 'Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}',
-            'Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}',
-            'Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}',
-            'percona-toolkit',
-            'percona-xtrabackup' ]
+    name: 
+      - "Percona-Server-server-{{mysql_version_major}}{{mysql_version_minor}}"
+      - "Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}"
+      - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
+      - "percona-toolkit"
+      - "percona-xtrabackup"
     state: present
+  when: mysql_version_major|int < 8
+
+- name: "Install percona database server (Percona version >= 8)"
+  yum:
+    name: 
+      - "percona-server-server-{{mysql_version_major}}.{{mysql_version_minor}}*"
+      - "percona-server-client-{{mysql_version_major}}.{{mysql_version_minor}}*"
+      - "percona-server-devel-{{mysql_version_major}}.{{mysql_version_minor}}*"
+      - "percona-toolkit"
+      - "percona-xtrabackup"
+    state: present
+  when: mysql_version_major|int >= 8
 
 - name: "Install MySQL-python package"
   yum:
@@ -26,9 +44,3 @@
     group: "mysql"
     mode: 0755
     state: "directory"
-
-- name: "Ensure that percona is running and enabled"
-  service:
-    name: "mysql"
-    state: "started"
-    enabled: "yes"
