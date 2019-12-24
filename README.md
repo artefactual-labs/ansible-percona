@@ -5,7 +5,8 @@ Adapted from https://github.com/hpcloud-mon/ansible-percona
 
 ## Requirements
 
-None.
+Ansible >= 2.5 and <= 2.8. 
+See https://github.com/artefactual-labs/ansible-percona/issues/41
 
 ## Role Variables
 
