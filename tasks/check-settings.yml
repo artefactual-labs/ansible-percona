@@ -1,0 +1,20 @@
+---
+
+- name: "Check if percona-server is installed"
+  shell: dpkg -l | grep -i percona-server-server
+  ignore_errors: yes
+  register: percona_server_is_installed
+
+- name: "Check for innodb_log_file_size setting (Ubuntu)"
+  shell: 
+    cmd: grep -E ^innodb_log_file_size /etc/mysql/my.cnf | awk -F= '{ print $2}' | sed 's/\s//g'
+    removes: "/etc/mysql/my.cnf"
+  register: configured_innodb_log_file_size
+
+- name: "Abort when innodb_log_file_size changes"
+  fail:
+    msg: "The existing MySQL server has innodb_log_file_size={{ configured_innodb_log_file_size.stdout }}, but your are trying to set it to {{ mysql_innodb_log_file_size }}. Please, change this value for the variable in either ansible or the server itself. See: https://dev.mysql.com/doc/refman/5.6/en/innodb-redo-log.html"
+  when:
+    - percona_server_is_installed.stdout|trim != ""
+    - not configured_innodb_log_file_size.stdout | regex_search('^skipped')
+    - configured_innodb_log_file_size.stdout != mysql_innodb_log_file_size

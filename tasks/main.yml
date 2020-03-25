@@ -1,4 +1,12 @@
 ---
+- include: check-settings.yml
+  tags: check
+  when: ansible_os_family != "RedHat"
+
+- include: check-settings-centos.yml
+  tags: check
+  when: ansible_os_family == "RedHat"
+
 - include: install.yml
   tags: install
   when: ansible_os_family != "RedHat"
