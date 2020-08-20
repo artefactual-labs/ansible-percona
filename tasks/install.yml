@@ -1,7 +1,7 @@
 ---
 # (do not put quotes on key id, for some reason it won't work)
 - name: "Obtaining percona public key"
-  apt_key: 
+  apt_key:
     keyserver: "keyserver.ubuntu.com"
     id: 9334A25F8507EFA5
 
@@ -47,7 +47,7 @@
 
 - name: "Install percona packages and dependencies on Ubuntu (Percona version < 8)"
   apt:
-    name: 
+    name:
       - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-toolkit"
@@ -73,10 +73,10 @@
       - "percona-server-server={{ mysql_version_major }}.{{ mysql_version_minor }}*"
       - "percona-server-client={{ mysql_version_major }}.{{ mysql_version_minor }}*"
       - "percona-toolkit"
-      - "percona-xtrabackup"
+      - "percona-xtrabackup-80"
     state: "present"
   when: mysql_version_major|int >= 8
- 
+
 - name: "Adjust permissions of datadir"
   file:
     path: "{{ mysql_datadir }}"
