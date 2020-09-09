@@ -25,6 +25,12 @@
   command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
   when: mysql_version_major|int >= 8
 
+- name: "Install python-is-python3 (Ubuntu >= Focal/20.04)"
+  apt:
+    name: "python-is-python3"
+  when:
+    - ansible_distribution_version is version_compare('20.04', '>=')
+
 - name: "Get the major version of python used to run ansible"
   command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
   register: ansible_python_major
