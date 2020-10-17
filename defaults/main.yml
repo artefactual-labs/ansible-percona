@@ -27,6 +27,7 @@ mysql_character_set_server: "utf8"
 mysql_collation_server: "utf8_general_ci"
 mysql_mysqldump_max_allowed_packet: "128M"
 mysql_isamchk_key_buffer: "16M"
+mysql_sort_buffer_size: "256K"
 
 # InnoDB tuning
 mysql_innodb_file_per_table: "1"
