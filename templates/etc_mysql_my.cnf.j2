@@ -52,6 +52,7 @@ table_open_cache        = {{ mysql_table_cache }}
 {% if  mysql_version is version('5.7', '<') %}
 thread_concurrency      = {{ mysql_thread_concurrency }}
 {% endif %}
+sort_buffer_size        = {{ mysql_sort_buffer_size }}
 
 # ** Query Cache Configuration, removed in MySQL >= 8.0
 {% if mysql_version_major|int < 8 %}
