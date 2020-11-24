@@ -28,6 +28,9 @@ port        = {{ mysql_port }}
 basedir     = /usr
 datadir     = {{ mysql_datadir }}
 tmpdir      = /tmp
+{% if  mysql_version is version('8.0', '>=') and mysql_disable_log_bin|bool %}
+disable_log_bin
+{% endif %}
 {% if mysql_sql_mode is defined %}
 sql_mode={{ mysql_sql_mode }}
 {% endif %}
