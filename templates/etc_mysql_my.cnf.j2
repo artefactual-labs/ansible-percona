@@ -22,6 +22,9 @@ port        = {{ mysql_port }}
 basedir     = /usr
 datadir     = {{ mysql_datadir }}
 tmpdir      = /tmp
+{% if  mysql_version is version('8.0', '>=') and mysql_disable_log_bin|bool %}
+disable_log_bin
+{% endif %}
 {% if  mysql_version is version('5.7', '<') %}
 # language is for pre-5.5. In 5.5 it is an alias for lc_messages_dir.
 language = {{ mysql_language }}
