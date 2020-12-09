@@ -1,0 +1,115 @@
+---
+name: "Test"
+on:
+  pull_request:
+  push:
+    branches:
+      - "qa/**"
+      - "stable/**"
+jobs:
+  test:
+    name: "Test ${{ matrix.name }}"
+    runs-on: "ubuntu-18.04"
+    strategy:
+      matrix:
+        include:
+          - name: "Trusty + Percona Server 5.6"
+            distribution: "ubuntu"
+            version: "trusty"
+            ansible_extra_vars: ""
+          - name: "Bionic + Percona Server 5.6"
+            distribution: "ubuntu"
+            version: "bionic"
+            ansible_extra_vars: ""
+          - name: "Bionic + Percona Server 5.7"
+            distribution: "ubuntu"
+            version: "bionic"
+            ansible_extra_vars: "mysql_version_major=5 mysql_version_minor=7"
+          - name: "Bionic + Percona Server 8.0"
+            distribution: "ubuntu"
+            version: "bionic"
+            ansible_extra_vars: "mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password"
+          - name: "Xenial + Percona Server 5.6 with python3"
+            distribution: "ubuntu"
+            version: "xenial"
+            ansible_extra_vars: "ansible_python_interpreter=/usr/bin/python3"
+          - name: "Xenial + Percona Server 5.6"
+            distribution: "ubuntu"
+            version: "xenial"
+            ansible_extra_vars: ""
+          - name: "Xenial + Percona Server 5.7"
+            distribution: "ubuntu"
+            version: "xenial"
+            ansible_extra_vars: "mysql_version_major=5 mysql_version_minor=7"
+          - name: "Xenial + Percona Server 8.0"
+            distribution: "ubuntu"
+            version: "xenial"
+            ansible_extra_vars: "mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password"
+          - name: "CentOS + Percona Server 5.6"
+            distribution: "centos"
+            version: "7"
+            ansible_extra_vars: ""
+          - name: "CentOS + Percona Server 5.7"
+            distribution: "centos"
+            version: "7"
+            ansible_extra_vars: "mysql_version_major=5 mysql_version_minor=7"
+          - name: "CentOS + Percona Server 8.0"
+            distribution: "centos"
+            version: "7"
+            ansible_extra_vars: "mysql_version_major=8 mysql_version_minor=0 mysql_default_authentication_plugin=mysql_native_password"
+    steps:
+      - name: "Check out repository"
+        uses: "actions/checkout@v2"
+      - name: "Build image"
+        id: "image-creator"
+        run: |
+          docker build \
+            --pull \
+            --no-cache \
+            --rm \
+            --file=tests/Dockerfile.${{ matrix.distribution }}-${{ matrix.version }} \
+            --tag=${{ matrix.distribution }}-${{ matrix.version }}:ansible \
+            tests
+          echo '::set-output name=IMAGE_TAG::${{ matrix.distribution }}-${{ matrix.version }}:ansible'
+      - name: "Create container"
+        id: "container-creator"
+        run: |
+          container_idfile=$(mktemp)
+          docker run \
+            --detach \
+            --privileged \
+            -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+            --volume="${PWD}":/etc/ansible/roles/role_under_test:ro \
+            ${{ steps.image-creator.outputs.IMAGE_TAG }} \
+              > "${container_idfile}"
+          echo "::set-output name=CONTAINER_ID::$(cat ${container_idfile})"
+      - name: "Run syntax check"
+        run: |
+          docker exec ${{ steps.container-creator.outputs.CONTAINER_ID }} \
+            env ANSIBLE_FORCE_COLOR=1 \
+              ansible-playbook \
+                -v --extra-vars "${{ matrix.ansible_extra_vars }}" \
+                /etc/ansible/roles/role_under_test/tests/test.yml \
+                --syntax-check
+      - name: "Deploy"
+        run: |
+          docker exec ${{ steps.container-creator.outputs.CONTAINER_ID }} \
+            env ANSIBLE_FORCE_COLOR=1 \
+              ansible-playbook \
+                -v --extra-vars "${{ matrix.ansible_extra_vars }}" \
+                /etc/ansible/roles/role_under_test/tests/test.yml
+      - name: "Test UNIX socket"
+        run: |
+          docker exec ${{ steps.container-creator.outputs.CONTAINER_ID }} mysql -u root -e 'show databases;' \
+            | grep -q 'information_schema' \
+            && (echo 'OK: Able to login to MySQL server as root' && exit 0) \
+            || (echo 'Error: Unable to login to MySQL server as root' && exit 1)
+      - name: "Test TCP socket"
+        run: |
+          docker exec ${{ steps.container-creator.outputs.CONTAINER_ID }} mysql -h 127.0.0.1 -u root -e 'show databases;' \
+            | grep -q 'information_schema' \
+            && (echo 'OK: Able to login to MySQL server as root' && exit 0) \
+            || (echo 'Error: Unable to login to MySQL server as root' && exit 1)
+      - name: "Remove container"
+        run: |
+          docker rm -f ${{ steps.container-creator.outputs.CONTAINER_ID }}
