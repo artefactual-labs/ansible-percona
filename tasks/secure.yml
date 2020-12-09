@@ -8,6 +8,14 @@
     - mysql_version is version('5.7', '>=')
     - ansible_os_family == "RedHat"
 
+- name: "print log file"
+  shell: "cat /var/log/mysqld.log"
+  register: logfile
+  when:
+    - mysql_version is version('5.7', '>=')
+    - ansible_os_family == "RedHat"
+    - root_my_cnf_stat.stat.exists == False
+
 - name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
     - name: "Parse temporary password from mysql log, getting last one"
