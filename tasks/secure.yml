@@ -11,7 +11,7 @@
 - name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
     - name: "Parse temporary password from mysql log, getting last one"
-      shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
+      shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@.*: //p' | tail -n1"
       register: temppass
 
     # Set root password 
