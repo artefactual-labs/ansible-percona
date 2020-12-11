@@ -8,6 +8,14 @@
     - mysql_version is version('5.7', '>=')
     - ansible_os_family == "RedHat"
 
+- name: "is mysql server really really running?"
+  shell: "systemctl status mysql"
+  register: msqdcheck
+  when:
+    - mysql_version is version('5.7', '>=')
+    - ansible_os_family == "RedHat"
+    - root_my_cnf_stat.stat.exists == False
+
 - name: "print log file"
   shell: "cat /var/log/mysqld.log"
   register: logfile
