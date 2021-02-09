@@ -6,10 +6,12 @@ on:
     branches:
       - "qa/**"
       - "stable/**"
+      - "dev/ci-with-github-actions-douglas"
 jobs:
   test:
     name: "Test ${{ matrix.name }}"
     runs-on: "ubuntu-18.04"
+    continue-on-error: true
     strategy:
       matrix:
         include:

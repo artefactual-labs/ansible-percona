@@ -14,6 +14,12 @@
       shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
       register: temppass
 
+    - name: "Parse journalctl output if temppass is still empty"
+      shell: "journalctl -u mysqld --no-pager | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
+      register: temppass
+      when:
+        - temppass.stdout|trim == ""
+
     # Set root password 
     # (mysql_user module can't be used here, got error 1862 'Your password has expired. To log in you must change it using a client that supports expired passwords.')
     # escape single quotes in shell with '' not \'
