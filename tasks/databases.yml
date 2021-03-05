@@ -6,3 +6,8 @@
     encoding: "{{ item.encoding | default('utf8') }}"
     state: "present"
   with_items: "{{ mysql_databases }}"
+
+- name: "Load timezone database into MySQL"
+  shell: "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql mysql"
+  when:
+    - "mysql_timezone_info|bool"
