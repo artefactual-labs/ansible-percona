@@ -1,15 +1,28 @@
 ---
-- name: "Add Percona yum repository"
-  yum:
-    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
-    state: present
+
+- name: Configure repositories
+  block:
+    - name: "Add epel-release repository (RHEL)"
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: "present"
+
+    - name: "Add epel-release repository (CentOS)"
+      yum:
+        name: "epel-release"
+        state: "latest"
+
+    - name: "Add Percona yum repository"
+      yum:
+        name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        state: present
+
+    # https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
+    - name: "Enable Percona repository (Percona version >= 8)"
+      command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
+      when: mysql_version_major|int >= 8
   when: install_rpm_repositories|bool
 
-# https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
-- name: "Enable Percona repository (Percona version >= 8)"
-  command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
-  when: mysql_version_major|int >= 8 and install_rpm_repositories|bool
- 
 - name: "Install percona database server (Percona version < 8)"
   yum:
     name: 
