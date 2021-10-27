@@ -57,9 +57,26 @@
       - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-toolkit"
-      - "percona-xtrabackup"
     state: "present"
   when: mysql_version_major|int < 8
+
+- name: "Install percona-xtrabackup on Ubuntu (Percona version < 8)"
+  apt:
+    name:
+      - "percona-xtrabackup"
+    state: "present"
+  register: percona_xtrabackup_install
+  ignore_errors: yes
+  when: mysql_version_major|int < 8
+
+- name: "Install percona-xtrabackup-24 on Ubuntu (Percona version < 8)"
+  apt:
+    name:
+      - "percona-xtrabackup-24"
+    state: "present"
+  when:
+    - mysql_version_major|int < 8
+    - percona_xtrabackup_install.failed
 
 - name: "Install | configure debconf for version 8.0 (Use Legacy Authentication Method)"
   debconf:
