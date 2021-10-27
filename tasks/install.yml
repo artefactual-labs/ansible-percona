@@ -1,6 +1,6 @@
 ---
 # https://www.percona.com/doc/percona-server/5.7/installation/apt_repo.html#installing-percona-server-from-percona-apt-repository
-- name: Install gnupg2
+- name: Update apt cache and install gnupg2
   apt:
     name: gnupg2
     state: present
@@ -17,11 +17,6 @@
   apt_repository:
     repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
     state: "present"
-
-- name: "Update apt cache"
-  apt:
-    update_cache: yes
-    cache_valid_time: 300
 
 - name: "Install percona-release package (Percona version >= 8)"
   apt:
