@@ -35,7 +35,6 @@
     name: "python-is-python3"
   when:
     - not usr_bin_python.stat.exists
-    - ansible_os_family != "RedHat"
 
 - name: "Get the major version of python used to run ansible"
   command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
