@@ -1,64 +1,71 @@
 ---
-# (do not put quotes on key id, for some reason it won't work)
-- name: "Obtaining percona public key"
-  apt_key:
-    keyserver: "keyserver.ubuntu.com"
-    id: 9334A25F8507EFA5
+# https://github.com/percona/repo-config-docs/blob/master/source/percona-release.rst
+# https://www.percona.com/doc/percona-server/5.6/installation/apt_repo.html
+# https://www.percona.com/doc/percona-server/5.7/installation/apt_repo.html
+# https://www.percona.com/doc/percona-server/8.0/installation/apt_repo.html
+- name: Update apt cache and install percona-release dependencies
+  apt:
+    name:
+      - gnupg2
+      - curl
+      - wget
+      - lsb-release
+    state: present
+    update_cache: yes
+    cache_valid_time: 300
 
-- name: "Adding percona repository"
-  apt_repository:
-    repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
-    state: "present"
+- block:
+  # (do not put quotes on key id, for some reason it won't work)
+  - name: "Obtaining percona public key"
+    apt_key:
+      keyserver: "keyserver.ubuntu.com"
+      id: 9334A25F8507EFA5
+
+  - name: "Adding percona repository"
+    apt_repository:
+      repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
+      state: "present"
+  when: mysql_version_major|int < 8
+
+- block:
+  - name: "Install percona-release package (Percona version >= 8)"
+    apt:
+      deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
+
+  # https://www.percona.com/doc/percona-server/LATEST/installation/apt_repo.html
+  - name: "Enable Percona repository (Percona version >= 8)"
+    command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
+  when: mysql_version_major|int >= 8
 
 - name: "Update apt cache"
   apt:
     update_cache: yes
-    cache_valid_time: 300
+    cache_valid_time: 0
 
-- name: "Install percona-release package (Percona version >= 8)"
-  apt:
-    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
-  when: mysql_version_major|int >= 8
+- block:
+  - name: "Install percona packages and dependencies on Ubuntu (Percona version < 8)"
+    apt:
+      name:
+        - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
+        - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
+        - "percona-toolkit"
+      state: "present"
 
-# https://www.percona.com/doc/percona-server/LATEST/installation/apt_repo.html
-- name: "Enable Percona repository (Percona version >= 8)"
-  command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
-  when: mysql_version_major|int >= 8
+  - name: "Install percona-xtrabackup on Ubuntu (Percona version < 8)"
+    apt:
+      name:
+        - "percona-xtrabackup"
+      state: "present"
+    register: percona_xtrabackup_install
+    ignore_errors: yes
 
-- name: "Install python-is-python3 (Ubuntu >= Focal/20.04)"
-  apt:
-    name: "python-is-python3"
-  when:
-    - ansible_distribution_version is version_compare('20.04', '>=')
-
-- name: "Get the major version of python used to run ansible"
-  command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
-  register: ansible_python_major
-  changed_when: false
-
-- debug:
-    msg: "ansible_python_interpreter major version: {{ ansible_python_major.stdout }}"
-
-- name: "Install package dependencies for ansible MySQL modules (python 2)"
-  apt:
-    name: "python-mysqldb"
-  when:
-    - ansible_python_major.stdout == "2"
-
-- name: "Install package dependencies for ansible MySQL modules (python 3)"
-  apt:
-    name: "python3-mysqldb"
-  when:
-    - ansible_python_major.stdout == "3"
-
-- name: "Install percona packages and dependencies on Ubuntu (Percona version < 8)"
-  apt:
-    name:
-      - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
-      - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
-      - "percona-toolkit"
-      - "percona-xtrabackup"
-    state: "present"
+  - name: "Install percona-xtrabackup-24 on Ubuntu (Percona version < 8)"
+    apt:
+      name:
+        - "percona-xtrabackup-24"
+      state: "present"
+    when:
+    - percona_xtrabackup_install.failed
   when: mysql_version_major|int < 8
 
 - name: "Install | configure debconf for version 8.0 (Use Legacy Authentication Method)"
@@ -82,6 +89,18 @@
       - "percona-xtrabackup-80"
     state: "present"
   when: mysql_version_major|int >= 8
+
+- name: "Install package dependencies for ansible MySQL modules (python 2)"
+  apt:
+    name: "python-mysqldb"
+  when:
+    - ansible_python.version.major == 2
+
+- name: "Install package dependencies for ansible MySQL modules (python 3)"
+  apt:
+    name: "python3-mysqldb"
+  when:
+    - ansible_python.version.major == 3
 
 - name: "Adjust permissions of datadir"
   file:
