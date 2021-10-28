@@ -1,8 +1,7 @@
 ---
 
 - name: "Check if percona-server is installed"
-  shell: dpkg -l | grep -i percona-server-server
-  ignore_errors: yes
+  shell: dpkg -l | grep -i percona-server-server | cat
   register: percona_server_is_installed
 
 - name: "Check for innodb_log_file_size setting (Ubuntu)"
