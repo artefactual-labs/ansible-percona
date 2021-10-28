@@ -28,6 +28,11 @@
   command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
   when: mysql_version_major|int >= 8
 
+- name: "Update apt cache"
+  apt:
+    update_cache: yes
+    cache_valid_time: 0
+
 - name: "Install python-is-python3 (Ubuntu >= Focal/20.04)"
   apt:
     name: "python-is-python3"
