@@ -90,17 +90,9 @@
     state: "present"
   when: mysql_version_major|int >= 8
 
-- name: "Install package dependencies for ansible MySQL modules (python 2)"
+- name: "Install package dependencies for ansible MySQL modules"
   apt:
-    name: "python-mysqldb"
-  when:
-    - ansible_python.version.major == 2
-
-- name: "Install package dependencies for ansible MySQL modules (python 3)"
-  apt:
-    name: "python3-mysqldb"
-  when:
-    - ansible_python.version.major == 3
+    name: "python{{ ansible_python_version is version('3', '>=') | ternary('3', '') }}-mysqldb"
 
 - name: "Adjust permissions of datadir"
   file:
