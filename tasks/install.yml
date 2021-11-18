@@ -31,25 +31,20 @@
   when:
     - ansible_distribution_version is version_compare('20.04', '>=')
 
-- name: "Get the major version of python used to run ansible"
-  command: "{{ ansible_python_interpreter | default('/usr/bin/python') }} -c 'import sys; print(sys.version_info.major)'"
-  register: ansible_python_major
-  changed_when: false
-
 - debug:
-    msg: "ansible_python_interpreter major version: {{ ansible_python_major.stdout }}"
+    msg: "ansible_python_interpreter major version: {{ ansible_python.version.major }}"
 
 - name: "Install package dependencies for ansible MySQL modules (python 2)"
   apt:
     name: "python-mysqldb"
   when:
-    - ansible_python_major.stdout == "2"
+    - ansible_python.version.major == "2"
 
 - name: "Install package dependencies for ansible MySQL modules (python 3)"
   apt:
     name: "python3-mysqldb"
   when:
-    - ansible_python_major.stdout == "3"
+    - ansible_python.version.major == "3"
 
 - name: "Install percona packages and dependencies on Ubuntu (Percona version < 8)"
   apt:
