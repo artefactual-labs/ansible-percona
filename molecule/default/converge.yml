@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Include vars
+      include_vars: "test_role_vars.yml"
+
+    - include_role:
+        name: "ansible-percona"

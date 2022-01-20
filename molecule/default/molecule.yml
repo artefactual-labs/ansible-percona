@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: "geerlingguy/docker-${MOL_DISTRO:-ubuntu1804}-ansible:latest"
+    command: ${MOL_DOCKER_COMMAND:-""}
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: ${MOL_PRIVILEGED}
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
