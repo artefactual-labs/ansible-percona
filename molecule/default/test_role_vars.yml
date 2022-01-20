@@ -1,0 +1,13 @@
+---
+mysql_root_password: "rootPASS123#!$"
+
+mysql_databases:
+  - name: "atom"
+    collation: "utf8_general_ci"
+    encoding: "utf8"
+
+mysql_users:
+  - name: "atomuser"
+    pass: "atomPASS9876."
+    priv: "atom.*:ALL,GRANT"
+    host: "%"

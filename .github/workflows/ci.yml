@@ -1,0 +1,49 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    working-directory: 'ansible-percona'
+
+jobs:
+
+  molecule:
+    name: Molecule
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true    # set to false to not cancel other jobs if one fails
+      matrix:
+        include:
+          - distro: ubuntu1804
+            privileged: true
+          - distro: ubuntu2004
+            privileged: true
+          - distro: centos7
+            privileged: false
+
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: 'ansible-percona'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install ansible molecule[docker] docker
+
+      - name: Run Molecule tests.
+        run: molecule test --all
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOL_DISTRO: ${{ matrix.distro }}
+          MOL_PRIVILEGED: ${{ matrix.privileged }}
