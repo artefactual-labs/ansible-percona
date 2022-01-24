@@ -1,24 +1,21 @@
 ---
-# (do not put quotes on key id, for some reason it won't work)
-- name: "Obtaining percona public key"
-  apt_key:
-    keyserver: "keyserver.ubuntu.com"
-    id: 9334A25F8507EFA5
+# Installation tasks for Ubuntu
+# https://www.percona.com/doc/percona-server/5.7/installation/apt_repo.html
+# https://www.percona.com/doc/percona-server/8.0/installation/apt_repo.html
 
-- name: "Adding percona repository"
-  apt_repository:
-    repo: "deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
-    state: "present"
+
+- name: "Install gnupg"
+  apt:
+    name: gnupg2
+    update_cache: yes
+
+- name: "Install percona-release package"
+  apt:
+    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
 
 - name: "Update apt cache"
   apt:
     update_cache: yes
-    cache_valid_time: 300
-
-- name: "Install percona-release package (Percona version >= 8)"
-  apt:
-    deb: "https://repo.percona.com/apt/percona-release_latest.{{ ansible_distribution_release }}_all.deb"
-  when: mysql_version_major|int >= 8
 
 # https://www.percona.com/doc/percona-server/LATEST/installation/apt_repo.html
 - name: "Enable Percona repository (Percona version >= 8)"
@@ -42,7 +39,9 @@
 
 - name: "Install package dependencies for ansible MySQL modules (python 3)"
   apt:
-    name: "python3-mysqldb"
+    name: 
+      - "python3-pymysql"
+      - "python3-mysqldb"
   when:
     - ansible_python.version.major == 3     # version is a number, do not quote
 
