@@ -4,12 +4,14 @@
   shell: dpkg -l | grep -i percona-server-server
   ignore_errors: yes
   register: percona_server_is_installed
+  changed_when: False
 
 - name: "Check for innodb_log_file_size setting (Ubuntu)"
   shell: 
     cmd: grep -E ^innodb_log_file_size /etc/mysql/my.cnf | awk -F= '{ print $2}' | sed 's/\s//g'
     removes: "/etc/mysql/my.cnf"
   register: configured_innodb_log_file_size
+  changed_when: False
 
 - name: "Abort when innodb_log_file_size changes"
   fail:
