@@ -52,7 +52,6 @@
       - "percona-server-server-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-server-client-{{ mysql_version_major }}.{{ mysql_version_minor }}"
       - "percona-toolkit"
-      - "percona-xtrabackup"
     state: "present"
   when: mysql_version_major|int < 8
 
@@ -74,7 +73,6 @@
       - "percona-server-server={{ mysql_version_major }}.{{ mysql_version_minor }}*"
       - "percona-server-client={{ mysql_version_major }}.{{ mysql_version_minor }}*"
       - "percona-toolkit"
-      - "percona-xtrabackup-80"
     state: "present"
   when: mysql_version_major|int >= 8
 

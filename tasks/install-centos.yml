@@ -17,7 +17,6 @@
       - "Percona-Server-client-{{mysql_version_major}}{{mysql_version_minor}}"
       - "Percona-Server-devel-{{mysql_version_major}}{{mysql_version_minor}}"
       - "percona-toolkit"
-      - "percona-xtrabackup"
     state: present
   when: mysql_version_major|int < 8
 
@@ -28,7 +27,6 @@
       - "percona-server-client-{{mysql_version_major}}.{{mysql_version_minor}}*"
       - "percona-server-devel-{{mysql_version_major}}.{{mysql_version_minor}}*"
       - "percona-toolkit"
-      - "percona-xtrabackup"
     state: present
   when: mysql_version_major|int >= 8
 
