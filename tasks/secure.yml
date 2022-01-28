@@ -60,6 +60,7 @@
     name: ''
     host: "{{ item }}"
     state: absent
+    login_unix_socket: "{% if ansible_os_family == 'RedHat' %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
   with_items:
     - "{{ ansible_hostname }}"
     - "localhost"
