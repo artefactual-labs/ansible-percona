@@ -1,8 +1,14 @@
 ---
 
 # Version to install, defaulting to 5.6
+# - Although 5.6 is already in ES(Extended Support) phase, to prevent issues 
+#   with existing installations, do not increase default version for now
+#   (to avoid potentially breaking the target on a redeploy, because some
+#    distros require a purge of old Percona pkgs before installing a new version)
+# - For Ubuntu >= 20.04: set default to 5.7 (because 5.6 packages do not exist)
+
 mysql_version_major: "5"
-mysql_version_minor: "6"
+mysql_version_minor: "{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >=20 %}7{% else %}6{% endif %}"
 mysql_version: "{{ mysql_version_major|int }}.{{ mysql_version_minor|int }}"
 
 # Basic settings
