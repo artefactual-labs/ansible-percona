@@ -12,3 +12,13 @@
       command: "mysql -u root -h 127.0.0.1 -e 'show databases;'"
       become: true
       changed_when: false
+
+    - name: Show server status
+      block:
+        - command: "mysql -u root -NBe 'status'"
+          become: true
+          changed_when: false
+          register: mysql_status
+
+        - debug:
+            var: mysql_status.stdout
