@@ -1,19 +1,11 @@
 ---
 galaxy_info:
+  role_name: ansible-percona
+  namespace: artefactual-labs
   author: "Artefactual Systems"
   company: "Artefactual Systems"
   license: AGPLv3
   min_ansible_version: 2.5
-  platforms:
-    - name: Ubuntu
-      versions:
-        - trusty
-        - saucy
-        - precise
-    - name: Debian
-      versions:
-        - wheezy
-        - squeeze
   categories:
     - database
 dependencies: []
