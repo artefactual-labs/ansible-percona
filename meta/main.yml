@@ -1,7 +1,7 @@
 ---
 galaxy_info:
-  role_name: ansible-percona
-  namespace: artefactual-labs
+  role_name: ansible_percona
+  namespace: artefactual_labs
   author: "Artefactual Systems"
   company: "Artefactual Systems"
   license: AGPLv3
