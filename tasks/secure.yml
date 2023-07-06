@@ -6,7 +6,7 @@
   register: root_my_cnf_stat
   when:
     - mysql_version is version('5.7', '>=')
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ['RedHat', 'Rocky']
 
 - name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
@@ -29,7 +29,7 @@
         mode: 0600
   when:
     - mysql_version is version('5.7', '>=')
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ['RedHat', 'Rocky']
     - root_my_cnf_stat.stat.exists == False
 
 - name: "Set the root password"
@@ -39,7 +39,7 @@
     password: "{{ mysql_root_password }}"
     check_implicit_admin: yes
     state: present
-    login_unix_socket: "{% if ansible_os_family == 'RedHat' %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
+    login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
 
   with_items:
     - "{{ ansible_hostname }}"
@@ -60,7 +60,7 @@
     name: ''
     host: "{{ item }}"
     state: absent
-    login_unix_socket: "{% if ansible_os_family == 'RedHat' %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
+    login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
   with_items:
     - "{{ ansible_hostname }}"
     - "localhost"
