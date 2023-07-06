@@ -2,9 +2,10 @@
 
 - name: "Check if percona-server is installed"
   shell: rpm -qa | grep -i percona-server-server
-  ignore_errors: yes
+  failed_when: false
+  changed_when: false
+  check_mode: false
   register: percona_server_is_installed
-  changed_when: False
 
 - name: "Check for innodb_log_file_size setting (RedHat/CentOS)"
   shell:

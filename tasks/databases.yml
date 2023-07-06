@@ -5,7 +5,7 @@
     collation: "{{ item.collation | default('utf8_general_ci') }}"
     encoding: "{{ item.encoding | default('utf8') }}"
     state: "present"
-    login_unix_socket: "{% if ansible_os_family == 'RedHat' %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
+    login_unix_socket: "{% if ansible_os_family in ['RedHat','Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
   with_items: "{{ mysql_databases }}"
 
 - name: "Load timezone database into MySQL"

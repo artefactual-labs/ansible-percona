@@ -1,27 +1,27 @@
 ---
 - include: check-settings.yml
   tags: check
-  when: ansible_os_family != "RedHat"
+  when: ansible_os_family not in ['RedHat', 'Rocky']
 
 - include: check-settings-centos.yml
   tags: check
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family in ['RedHat', 'Rocky']
 
 - include: install.yml
   tags: install
-  when: ansible_os_family != "RedHat"
+  when: ansible_os_family not in ['RedHat', 'Rocky']
 
 - include: install-centos.yml
   tags: install
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family in ['RedHat', 'Rocky']
 
 - include: configure.yml
   tags: configure
-  when: ansible_os_family != "RedHat"
+  when: ansible_os_family not in ['RedHat', 'Rocky']
 
 - include: configure-centos.yml
   tags: configure
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family in ['RedHat', 'Rocky']
 
 - include: secure.yml
   tags: secure
