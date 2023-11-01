@@ -13,6 +13,12 @@
   when:
     - ansible_distribution_version is version_compare('8.0', '>=')
 
+- name: "Install Percona RPM GPG KEY"
+  rpm_key:
+    state: present
+    key: https://www.percona.com/downloads/RPM-GPG-KEY-percona
+  when: install_rpm_repositories|bool
+
 - name: "Add Percona yum repository"
   yum:
     name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
