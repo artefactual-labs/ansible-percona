@@ -8,5 +8,6 @@
     state: "present"
     host: "{{ item.host | default('localhost') }}"
     login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
+    append_privs: "{{ mysql_user_append_privs }}"
   with_items: "{{ mysql_users }}"
   no_log: "true"
