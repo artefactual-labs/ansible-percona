@@ -1,12 +1,4 @@
 ---
-- ansible.builtin.include_tasks: check-settings.yml
-  tags: check
-  when: ansible_os_family not in ['RedHat', 'Rocky']
-
-- ansible.builtin.include_tasks: check-settings-centos.yml
-  tags: check
-  when: ansible_os_family in ['RedHat', 'Rocky']
-
 - ansible.builtin.include_tasks: install.yml
   tags: install
   when: ansible_os_family not in ['RedHat', 'Rocky']
