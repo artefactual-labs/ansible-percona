@@ -54,6 +54,8 @@
     owner: root
     group: root
     mode: 0600
+  diff: false
+  no_log: true
 
 - name: "Ensure anonymous users are not in the database"
   mysql_user:
