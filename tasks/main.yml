@@ -1,33 +1,33 @@
 ---
-- include: check-settings.yml
+- ansible.builtin.include_tasks: check-settings.yml
   tags: check
   when: ansible_os_family not in ['RedHat', 'Rocky']
 
-- include: check-settings-centos.yml
+- ansible.builtin.include_tasks: check-settings-centos.yml
   tags: check
   when: ansible_os_family in ['RedHat', 'Rocky']
 
-- include: install.yml
+- ansible.builtin.include_tasks: install.yml
   tags: install
   when: ansible_os_family not in ['RedHat', 'Rocky']
 
-- include: install-centos.yml
+- ansible.builtin.include_tasks: install-centos.yml
   tags: install
   when: ansible_os_family in ['RedHat', 'Rocky']
 
-- include: configure.yml
+- ansible.builtin.include_tasks: configure.yml
   tags: configure
   when: ansible_os_family not in ['RedHat', 'Rocky']
 
-- include: configure-centos.yml
+- ansible.builtin.include_tasks: configure-centos.yml
   tags: configure
   when: ansible_os_family in ['RedHat', 'Rocky']
 
-- include: secure.yml
+- ansible.builtin.include_tasks: secure.yml
   tags: secure
 
-- include: databases.yml
+- ansible.builtin.include_tasks: databases.yml
   tags: databases
 
-- include: users.yml
+- ansible.builtin.include_tasks: users.yml
   tags: users
