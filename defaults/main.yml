@@ -1,5 +1,26 @@
 ---
 
+# Configuration file related variables
+# - By default this role Writes configuration to /etc/mysql/my.cnf
+#   (Ubuntu) or /etc/my.cnf (RedHat) (ref. vars/ directory files),
+#   (backwards compatibility with old deployments)
+# - For newer percona releases it is recommended to define the
+#   variables in host_vars as suggested below (i.e., avoid writing
+#   config directly to my.cnf and instead use the include dirs)
+# - Ref.
+#     https://askubuntu.com/questions/1283364/mysql-my-cnf-and-etc-alternatives
+#     https://serverfault.com/questions/954304/mysql-8-on-ubuntu-whats-the-difference-between-etc-mysql-conf-d-and-etc-mys
+#
+# - Suggested values:
+#   Ubuntu:
+# mysql_config_file_template: "etc/mysql/mysql.conf.d/z-config-via-ansible.cnf.j2"
+# mysql_config_file: /etc/mysql/mysql.conf.d/z-config-via-ansible.cnf
+#   RedHat:
+# mysql_config_file_template: "etc/my.cnf.d/z-config-via-ansible.cnf.j2"
+# mysql_config_file: "/etc/my.cnf.d/z-config-via-ansible.cnf"
+
+
+
 # Version to install, defaulting to 5.6
 # - Although 5.6 is already in ES(Extended Support) phase, to prevent issues 
 #   with existing installations, do not increase default version for now

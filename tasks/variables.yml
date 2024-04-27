@@ -1,0 +1,17 @@
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "vars/{{ ansible_distribution }}.yml"
+        - "vars/{{ ansible_os_family }}.yml"
+      skip: true
+
+- name: Define mysql_config_file_template
+  set_fact:
+    mysql_config_file_template: "{{ __mysql_config_file_template }}"
+  when: mysql_config_file_template is not defined
+
+- name: Define mysql_config_file
+  set_fact:
+    mysql_config_file: "{{ __mysql_config_file }}"
+  when: mysql_config_file is not defined

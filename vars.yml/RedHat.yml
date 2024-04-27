@@ -1,0 +1,2 @@
+__mysql_config_file_template: "etc_my.cnf-centos.j2"
+__mysql_config_file: "/etc/my.cnf"

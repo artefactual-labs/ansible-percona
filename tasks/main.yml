@@ -1,4 +1,13 @@
 ---
+- import_tasks: variables.yml
+  tags:
+    - check
+    - configure
+    - install
+    - secure
+    - databases
+    - users
+
 - import_tasks: check-settings.yml
   tags: check
   when: ansible_os_family not in ['RedHat', 'Rocky']
@@ -17,11 +26,6 @@
 
 - import_tasks: configure.yml
   tags: configure
-  when: ansible_os_family not in ['RedHat', 'Rocky']
-
-- import_tasks: configure-centos.yml
-  tags: configure
-  when: ansible_os_family in ['RedHat', 'Rocky']
 
 - import_tasks: secure.yml
   tags: secure
