@@ -19,8 +19,6 @@ jobs:
       fail-fast: true    # set to false to not cancel other jobs if one fails
       matrix:
         include:
-          - distro: ubuntu1804
-            privileged: true
           - distro: ubuntu2004
             privileged: true
           - distro: centos7
