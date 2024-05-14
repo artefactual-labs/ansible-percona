@@ -10,9 +10,20 @@
 
 - name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
+    - name: "Check mysqld.log has been populated"
+      stat:
+        path: "/var/log/mysqld.log"
+      register: mysqld_log
+
     - name: "Parse temporary password from mysql log, getting last one"
       shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
       register: temppass
+      when: mysqld_log.stat.size > 0
+
+    - name: "Parse temporary password from journal log"
+      shell: "journalctl --no-pager | sed -n '0,/.*temporary password is generated for root@localhost: /s/.*temporary password is generated for root@localhost: //p' | tail -n1"
+      register: temppass
+      when: mysqld_log.stat.size == 0
 
     # Set root@localhost password
     # (mysql_user module can't be used here, got error 1862 'Your password has expired. To log in you must change it using a client that supports expired passwords.')
