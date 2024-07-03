@@ -68,7 +68,7 @@ log_error = /var/log/mysql/error.log
 {% if mysql_version_major|int < 8 %}
 log_warnings = 2
 {% else %}
-log_error_verbosity = 2
+log_error_verbosity = 1
 {% endif %}
 #general_log_file        = /var/log/mysql/mysql.log
 #general_log             = 1
