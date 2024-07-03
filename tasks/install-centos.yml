@@ -16,7 +16,7 @@
 - name: "Install Percona RPM GPG KEY"
   rpm_key:
     state: present
-    key: https://www.percona.com/downloads/RPM-GPG-KEY-percona
+    key: https://repo.percona.com/yum/PERCONA-PACKAGING-KEY
   when: install_rpm_repositories|bool
 
 - name: "Add Percona yum repository"
