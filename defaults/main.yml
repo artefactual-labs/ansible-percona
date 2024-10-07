@@ -46,6 +46,10 @@ mysql_innodb_log_file_size: "64M"
 
 mysql_character_set_client_handshake: "FALSE"
 
+# Optional timeout settings. Default 28800 (8h)
+#mysql_wait_timeout: "28800"
+#mysql_interactive_timeout: "28800"
+
 mysql_timezone_info: "false"
 
 mysql_databases: []

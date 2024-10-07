@@ -56,6 +56,12 @@ table_open_cache        = {{ mysql_table_cache }}
 thread_concurrency      = {{ mysql_thread_concurrency }}
 {% endif %}
 sort_buffer_size        = {{ mysql_sort_buffer_size }}
+{% if mysql_wait_timeout is defined %}
+wait_timeout            = {{ mysql_wait_timeout }}
+{% endif %}
+{% if mysql_interactive_timeout is defined %}
+interactive_timeout     = {{ mysql_interactive_timeout }}
+{% endif %}
 
 # ** Query Cache Configuration, removed in MySQL >= 8.0
 {% if mysql_version_major|int < 8 %}
