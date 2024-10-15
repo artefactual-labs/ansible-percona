@@ -75,11 +75,3 @@
       - "percona-toolkit"
     state: "present"
   when: mysql_version_major|int >= 8
-
-- name: "Adjust permissions of datadir"
-  file:
-    path: "{{ mysql_datadir }}"
-    owner: "mysql"
-    group: "mysql"
-    mode: 0700
-    state: "directory"
