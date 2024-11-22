@@ -19,8 +19,6 @@ jobs:
       fail-fast: true    # set to false to not cancel other jobs if one fails
       matrix:
         include:
-          - distro: ubuntu1804
-            privileged: true
           - distro: ubuntu2004
             privileged: true
           - distro: centos7
@@ -38,7 +36,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker
+        run: pip3 install ansible molecule molecule-plugins[docker] docker
 
       - name: Run Molecule tests.
         run: molecule test --all
