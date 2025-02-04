@@ -13,6 +13,7 @@ mysql_version: "{{ mysql_version_major|int }}.{{ mysql_version_minor|int }}"
 
 # Basic settings
 mysql_root_password: "pass"
+mysql_store_root_password: "True"
 mysql_port: "3306"
 mysql_bind_address: "127.0.0.1"
 mysql_language: "/usr/share/mysql/"
