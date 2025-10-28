@@ -4,6 +4,7 @@
   when:
     - ansible_distribution_major_version|int == 8
     - install_rpm_repositories|bool
+    - mysql_version_major|int >= 8
 
 - name: "Remove mariadb-connector-c-config (RedHat/CentOS/Rocky >= 8.0)"
   yum:
@@ -30,7 +31,7 @@
   command: "percona-release setup -y ps{{ mysql_version_major }}{{ mysql_version_minor }}"
   when:
     - mysql_version_major|int >= 8
-    - mysql_version_minor|int != 4
+    - mysql_version_minor|int < 4
     - install_rpm_repositories|bool
   changed_when: False     # TODO: check for task idempotency
 
@@ -40,12 +41,12 @@
   command: "percona-release setup -y ps-{{ mysql_version_major }}{{ mysql_version_minor }}-lts"
   when:
     - mysql_version_major|int >= 8
-    - mysql_version_minor|int == 4
+    - mysql_version_minor|int >= 4
     - install_rpm_repositories|bool
   changed_when: False     # TODO: check for task idempotency
 
 - name: "Enable Percona toolkit (RH/CentOS/Rocky >= 8.0)"
-  command: "percona-release enable tools"
+  command: "percona-release enable pt release"
   when:
     - install_rpm_repositories|bool
     - ansible_distribution_version is version_compare('8.0', '>=')

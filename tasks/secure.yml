@@ -11,8 +11,15 @@
 - name: "Percona >= 5.7 new install measures (Red Hat)"
   block:
     - name: "Parse temporary password from mysql log, getting last one"
-      shell: "cat /var/log/mysqld.log | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1"
+      shell: |
+        if [ -f /var/log/mysqld.log ]; then
+          sed -n 's/.*temporary password is generated for root@localhost: //p' /var/log/mysqld.log | tail -n1
+        else
+          journalctl --no-pager | sed -n 's/.*temporary password is generated for root@localhost: //p' | tail -n1
+        fi
       register: temppass
+      changed_when: false
+      failed_when: temppass.stdout | trim == ""
 
     # Set root@localhost password
     # (mysql_user module can't be used here, got error 1862 'Your password has expired. To log in you must change it using a client that supports expired passwords.')
@@ -40,7 +47,6 @@
     check_implicit_admin: yes
     state: present
     login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
-
   with_items:
     - "{{ ansible_hostname }}"
     - "127.0.0.1"

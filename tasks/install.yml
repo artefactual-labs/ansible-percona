@@ -22,7 +22,7 @@
   command: "percona-release setup ps{{ mysql_version_major }}{{ mysql_version_minor }}"
   when:
     - mysql_version_major|int >= 8
-    - mysql_version_minor|int != 4
+    - mysql_version_minor|int < 4
   changed_when: False     # TODO: check for task idempotency
 
 #https://docs.percona.com/percona-server/8.4/apt-repo.html#install-percona-server-for-mysql-using-apt
@@ -31,7 +31,7 @@
   command: "percona-release setup ps-{{ mysql_version_major }}{{ mysql_version_minor }}-lts"
   when:
     - mysql_version_major|int >= 8
-    - mysql_version_minor|int == 4
+    - mysql_version_minor|int >= 4
   changed_when: False     # TODO: check for task idempotency
 
 
@@ -76,6 +76,7 @@
   changed_when: false
   when:
     - mysql_version_major|int >= 8
+    - mysql_version_minor|int < 4
     - mysql_default_authentication_plugin is defined
     - mysql_default_authentication_plugin == "mysql_native_password"
 
