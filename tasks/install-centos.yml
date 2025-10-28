@@ -26,9 +26,22 @@
   when: install_rpm_repositories|bool
 
 # https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
-- name: "Enable Percona repository (Percona version >= 8)"
+- name: "Enable Percona repository (Percona version >= 8 and not 8.4)"
   command: "percona-release setup -y ps{{ mysql_version_major }}{{ mysql_version_minor }}"
-  when: mysql_version_major|int >= 8 and install_rpm_repositories|bool
+  when:
+    - mysql_version_major|int >= 8
+    - mysql_version_minor|int != 4
+    - install_rpm_repositories|bool
+  changed_when: False     # TODO: check for task idempotency
+
+#https://docs.percona.com/percona-server/8.4/yum-repo.html#install-using-dnf-rhel-8
+# note, percona 84 use a different format: ps-84-lts instead of ps84
+- name: "Enable Percona repository (Percona version == 8.4)"
+  command: "percona-release setup -y ps-{{ mysql_version_major }}{{ mysql_version_minor }}-lts"
+  when:
+    - mysql_version_major|int >= 8
+    - mysql_version_minor|int == 4
+    - install_rpm_repositories|bool
   changed_when: False     # TODO: check for task idempotency
 
 - name: "Enable Percona toolkit (RH/CentOS/Rocky >= 8.0)"

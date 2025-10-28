@@ -34,12 +34,22 @@ disable_log_bin
 {% if mysql_sql_mode is defined %}
 sql_mode={{ mysql_sql_mode }}
 {% endif %}
-{% if mysql_default_authentication_plugin is defined and mysql_version is version('5.7', '>=') %}
-default_authentication_plugin={{ mysql_default_authentication_plugin }}
+{% if mysql_default_authentication_plugin is defined and mysql_version is version('5.7', '>=') and mysql_version is version('8.4', '<') %}
+default_authentication_plugin = {{ mysql_default_authentication_plugin }}
 {% endif %}
 
+{% if mysql_enable_legacy_authentication_plugin|bool and  mysql_version is version('8.4', '>=') %}
+mysql_native_password = ON
+{% endif %}
+
+{% if mysql_authentication_policy is defined and  mysql_version is version('8.4', '>=') %}
+authentication_policy = {{ mysql_authentication_policy }}
+{% endif %}
+
+{% if mysql_version is version('8.4', '<') %}
 # language is for pre-5.5. In 5.5 it is an alias for lc_messages_dir.
 language = {{ mysql_language }}
+{% endif %}
 bind-address = {{ mysql_bind_address }}
 skip-external-locking
 
@@ -88,7 +98,11 @@ log_error_verbosity = 1
 # The following can be used as easy to replay backup logs or for replication.
 #server-id      = 1
 #log_bin            = /var/log/mysql/mysql-bin.log
+{% if mysql_version is version('8.4', '<') %}
 expire_logs_days    = 10
+{% else %}
+binlog_expire_logs_seconds = 864000
+{% endif %}
 max_binlog_size     = 100M
 #binlog_do_db       = include_database_name
 #binlog_ignore_db   = include_database_name
@@ -117,7 +131,10 @@ optimizer_switch = {{ mysql_optimizer_switch }}
 
 character_set_server = {{ mysql_character_set_server }}
 collation_server = {{ mysql_collation_server }}
+{% if mysql_character_set_client_handshake is defined and mysql_version is version('8.4', '<') %}
 character-set-client-handshake = {{ mysql_character_set_client_handshake }}
+{% endif %}
+
 
 [mysqldump]
 quick

@@ -15,7 +15,7 @@ mysql_version: "{{ mysql_version_major|int }}.{{ mysql_version_minor|int }}"
 mysql_root_password: "pass"
 mysql_port: "3306"
 mysql_bind_address: "127.0.0.1"
-mysql_language: "/usr/share/mysql/"
+mysql_language: "/usr/share/mysql/" # Only for MySQL < 8.4
 mysql_datadir: "/var/lib/mysql"
 
 # Fine tuning
@@ -34,6 +34,7 @@ mysql_collation_server: "utf8_general_ci"
 mysql_mysqldump_max_allowed_packet: "128M"
 mysql_isamchk_key_buffer: "16M"
 mysql_sort_buffer_size: "256K"
+
 
 # InnoDB tuning
 mysql_innodb_file_per_table: "1"
@@ -61,5 +62,13 @@ install_rpm_repositories: "true"
 mysql_disable_log_bin: "true"
 
 # Default Auth Plugin
-# used in templates when Percona Server >= 5.7
+# used in templates when Percona Server >= 5.7 and < 8.4
 mysql_default_authentication_plugin: "mysql_native_password"
+
+# MySQL 8.4 auth
+# Allow to use old mysql_native_password passwords
+mysql_enable_legacy_authentication_plugin: True
+# See https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_authentication_policy
+# Default value allows to use caching_sha2_password for new users, and will auth with others when mysql_enable_legacy_authentication_plugin=True
+mysql_authentication_policy: '*,,'
+
