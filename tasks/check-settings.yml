@@ -13,6 +13,7 @@
     removes: "/etc/mysql/my.cnf"
   register: configured_innodb_log_file_size
   changed_when: False
+  check_mode: False
 
 - name: "Abort when innodb_log_file_size changes"
   fail:
