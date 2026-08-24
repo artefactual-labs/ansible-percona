@@ -1,0 +1,26 @@
+---
+- name: Check for existing MySQL configuration before upgrading to 8.4
+  stat:
+    path: /etc/mysql/my.cnf
+  register: mysql_existing_config
+
+- name: Remove role-generated authentication option removed in MySQL 8.4
+  lineinfile:
+    path: /etc/mysql/my.cnf
+    regexp: '^\s*default_authentication_plugin\s*='
+    state: absent
+  when: mysql_existing_config.stat.exists
+
+- name: Remove role-generated binary log expiry option removed before MySQL 8.4
+  lineinfile:
+    path: /etc/mysql/my.cnf
+    regexp: '^\s*expire_logs_days\s*='
+    state: absent
+  when: mysql_existing_config.stat.exists
+
+- name: Remove role-generated client handshake option removed before MySQL 8.4
+  lineinfile:
+    path: /etc/mysql/my.cnf
+    regexp: '^\s*character-set-client-handshake\s*='
+    state: absent
+  when: mysql_existing_config.stat.exists
