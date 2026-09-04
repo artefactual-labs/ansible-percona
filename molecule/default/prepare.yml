@@ -1,0 +1,17 @@
+---
+# On Ubuntu hosts, including GitHub-hosted runners, AppArmor confines the
+# unix_chkpwd PAM helper and denies it the capabilities needed to read the
+# mode 0000 /etc/shadow shipped by Enterprise Linux images. Every sudo call
+# then fails with "PAM account management error", which breaks become: true.
+# Letting root read the file through regular permissions avoids that.
+# See https://github.com/geerlingguy/docker-rockylinux9-ansible/issues/6
+- name: Prepare
+  hosts: all
+  become: false
+
+  tasks:
+    - name: Make /etc/shadow readable by root (Enterprise Linux images)
+      file:
+        path: /etc/shadow
+        mode: "0400"
+      when: ansible_os_family in ['RedHat', 'Rocky']
