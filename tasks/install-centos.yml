@@ -49,6 +49,7 @@
   when:
     - install_rpm_repositories|bool
     - ansible_distribution_version is version_compare('8.0', '>=')
+  changed_when: False
 
 - name: "Install percona database server (Percona version < 8)"
   yum:

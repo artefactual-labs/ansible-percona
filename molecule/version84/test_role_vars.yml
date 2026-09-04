@@ -1,4 +1,8 @@
 ---
+# Percona Server 8.4 LTS.
+mysql_version_major: "8"
+mysql_version_minor: "4"
+
 mysql_root_password: "rootPASS123#!$"
 
 mysql_databases:
@@ -11,7 +15,3 @@ mysql_users:
     pass: "atomPASS9876."
     priv: "atom.*:ALL,GRANT"
     host: "%"
-
-mysql_version_major: "8"
-mysql_version_minor: "0"
-mysql_default_authentication_plugin: "mysql_native_password"

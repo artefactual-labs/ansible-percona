@@ -5,10 +5,10 @@ name: CI
   push:
     branches:
       - master
+  workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: 'ansible-percona'
+permissions:
+  contents: read
 
 jobs:
 
@@ -16,29 +16,34 @@ jobs:
     name: Molecule
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true    # set to false to not cancel other jobs if one fails
+      fail-fast: false
       matrix:
-        include:
-          - distro: ubuntu1804
-            privileged: true
-          - distro: ubuntu2004
-            privileged: true
-          - distro: centos7
-            privileged: false
+        distro:
+          - ubuntu2204
+          - ubuntu2404
+          - rockylinux9
 
     steps:
       - name: Check out the codebase.
-        uses: actions/checkout@v2
-        with:
-          path: 'ansible-percona'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker
+        run: pip3 install ansible molecule 'molecule-plugins[docker]' docker
+
+      - name: Unload the host's mysqld AppArmor profile.
+        # The runner image ships MySQL, whose AppArmor profile is attached by
+        # path to /usr/sbin/mysqld inside the privileged containers as well.
+        # It then denies Percona on Rocky Linux access to /etc/my.cnf and
+        # /var/log/mysqld.log.
+        run: |
+          if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+            sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+          fi
 
       - name: Run Molecule tests.
         run: molecule test --all
@@ -46,4 +51,3 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOL_DISTRO: ${{ matrix.distro }}
-          MOL_PRIVILEGED: ${{ matrix.privileged }}

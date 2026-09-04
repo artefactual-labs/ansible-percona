@@ -1,4 +1,10 @@
 ---
+# Percona Server 8.0. The role still defaults to 5.x, but 5.x packages are not
+# available for the tested distributions and are no longer tested.
+mysql_version_major: "8"
+mysql_version_minor: "0"
+mysql_default_authentication_plugin: "mysql_native_password"
+
 mysql_root_password: "rootPASS123#!$"
 
 mysql_databases:
