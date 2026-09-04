@@ -8,4 +8,4 @@
       include_vars: "test_role_vars.yml"
 
     - include_role:
-        name: "ansible-percona"
+        name: "artefactual_labs.ansible_percona"
