@@ -1,10 +1,14 @@
 ---
 
+# Percona Server 8 looks for its language files in /usr/share/percona-server
+# itself, and on EL10 /usr/share/mysql may already be a directory owned by the
+# distribution's mysql8.4-common, pulled in by the toolkit's Perl driver.
 - name: "Create language dir symlink"
   file:
     src: "/usr/share/percona-server"
     dest: "/usr/share/mysql"
     state: "link"
+  when: mysql_version_major|int < 8
 
 - name: "Update the my.cnf"
   template:
