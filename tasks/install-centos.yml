@@ -62,6 +62,10 @@
     state: present
   when: mysql_version_major|int < 8
 
+# The Percona Server 8.0 build for EL10 recommends the group(mysql) and
+# user(mysql) capabilities, which only the MariaDB packages provide there, so
+# weak dependencies would pull MariaDB in and its client would conflict with
+# Percona's. Percona Server creates the mysql account itself.
 - name: "Install percona database server (Percona version >= 8)"
   yum:
     name: 
@@ -70,6 +74,7 @@
       - "percona-server-devel-{{mysql_version_major}}.{{mysql_version_minor}}*"
       - "percona-toolkit"
     state: present
+    install_weak_deps: false
   when: mysql_version_major|int >= 8
 
 - name: "Install MySQL-python package (ansible python2)"
