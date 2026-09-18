@@ -44,8 +44,10 @@
     - install_rpm_repositories|bool
   changed_when: False     # TODO: check for task idempotency
 
+# The toolkit has its own repository: the tools one stops at toolkit 3.6.0 on
+# EL8 and EL9 and does not carry it at all on EL10.
 - name: "Enable Percona toolkit (RH/CentOS/Rocky >= 8.0)"
-  command: "percona-release enable tools"
+  command: "percona-release enable pt"
   when:
     - install_rpm_repositories|bool
     - ansible_distribution_version is version_compare('8.0', '>=')
