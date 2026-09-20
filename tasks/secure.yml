@@ -36,7 +36,7 @@
   mysql_user:
     name: root
     host: "{{ item }}"
-    password: "{{ mysql_root_password }}"
+    login_password: "{{ mysql_root_password }}"
     check_implicit_admin: yes
     state: present
     login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
@@ -55,11 +55,14 @@
     group: root
     mode: 0600
 
+
 - name: "Ensure anonymous users are not in the database"
   mysql_user:
     name: ''
     host: "{{ item }}"
     state: absent
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
     login_unix_socket: "{% if ansible_os_family in ['RedHat', 'Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
   with_items:
     - "{{ ansible_hostname }}"
@@ -67,5 +70,7 @@
 
 - name: "Remove the test database"
   mysql_db:
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
     name: test
     state: absent

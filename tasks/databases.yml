@@ -5,10 +5,15 @@
     collation: "{{ item.collation | default('utf8_general_ci') }}"
     encoding: "{{ item.encoding | default('utf8') }}"
     state: "present"
+    login_user: "root"
+    login_password: "{{ mysql_root_password }}"
     login_unix_socket: "{% if ansible_os_family in ['RedHat','Rocky'] %}/var/lib/mysql/mysql.sock{% else %}/var/run/mysqld/mysqld.sock{% endif %}"
   with_items: "{{ mysql_databases }}"
 
 - name: "Load timezone database into MySQL"
   shell: "mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql mysql"
+  environment:
+    MYSQL_USER: root
+    MYSQL_PWD: "{{ mysql_root_password }}"
   when:
     - "mysql_timezone_info|bool"
