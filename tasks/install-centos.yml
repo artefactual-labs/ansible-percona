@@ -44,8 +44,16 @@
     - install_rpm_repositories|bool
   changed_when: False     # TODO: check for task idempotency
 
-- name: "Enable Percona toolkit (RH/CentOS/Rocky >= 8.0)"
-  command: "percona-release enable tools"
+# The toolkit itself lives in the pt repository: the tools one stops at
+# toolkit 3.6.0 on EL8 and EL9 and does not carry it at all on EL10. The
+# tools repository still provides Percona's build of the toolkit's Perl
+# driver, which needs no MySQL client library; without it, EL10 would take
+# the distribution's driver and pull its MySQL client packages in.
+- name: "Enable Percona toolkit repositories (RH/CentOS/Rocky >= 8.0)"
+  command: "percona-release enable {{ item }}"
+  loop:
+    - tools
+    - pt
   when:
     - install_rpm_repositories|bool
     - ansible_distribution_version is version_compare('8.0', '>=')
@@ -61,6 +69,11 @@
     state: present
   when: mysql_version_major|int < 8
 
+# The Percona Server 8 builds for EL10 recommend the group(mysql) and
+# user(mysql) capabilities, which only the distribution's MariaDB and MySQL
+# server packages provide there, so weak dependencies would pull one of them
+# in and its files would conflict with Percona's. Percona Server creates the
+# mysql account itself.
 - name: "Install percona database server (Percona version >= 8)"
   yum:
     name: 
@@ -69,6 +82,7 @@
       - "percona-server-devel-{{mysql_version_major}}.{{mysql_version_minor}}*"
       - "percona-toolkit"
     state: present
+    install_weak_deps: false
   when: mysql_version_major|int >= 8
 
 - name: "Install MySQL-python package (ansible python2)"
