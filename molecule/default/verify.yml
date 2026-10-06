@@ -2,7 +2,12 @@
 
 - name: Verify
   hosts: all
+  vars:
+    mysql_error_log: "{{ '/var/log/mysqld.log' if ansible_facts['os_family'] in ['RedHat', 'Rocky'] else '/var/log/mysql/error.log' }}"
   tasks:
+    - name: Include vars
+      include_vars: "test_role_vars.yml"
+
     - name: Make sure we can connect to MySQL via Unix socket.
       command: "mysql -u root -e 'show databases;'"
       become: true
@@ -22,3 +27,26 @@
 
         - debug:
             var: mysql_status.stdout
+
+    - name: Make sure the server logged no errors.
+      command: "grep -F '[ERROR]' {{ mysql_error_log }}"
+      become: true
+      register: mysql_errors
+      changed_when: false
+      failed_when: mysql_errors.rc != 1
+
+    - name: Make sure Percona Toolkit can query the server.
+      command: "pt-show-grants"
+      become: true
+      changed_when: false
+      register: toolkit_grants
+
+    - name: Make sure Percona Toolkit saw the users the role created.
+      assert:
+        that: expected_header in toolkit_grants.stdout
+        quiet: true
+      vars:
+        expected_header: "-- Grants for '{{ item.name }}'@'{{ item.host }}'"
+      loop: "{{ mysql_users }}"
+      loop_control:
+        label: "{{ item.name }}@{{ item.host }}"
